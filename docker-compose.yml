@@ -1,0 +1,64 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: campusmart
+      POSTGRES_USER: campusmart
+      POSTGRES_PASSWORD: campusmart123
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U campusmart']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg2://campusmart:campusmart123@postgres:5432/campusmart
+      JWT_SECRET: docker-compose-secret-change-me
+      FRONTEND_ORIGIN: http://localhost:3000
+      ALLOWED_EMAIL_DOMAINS: ssn.edu.in
+      ALLOW_ANY_EMAIL: 'true'
+      AUTO_VERIFY: 'true'
+      UPLOAD_DIR: /app/uploads
+      ADMIN_EMAIL: admin@ssn.edu.in
+      ADMIN_PASSWORD: Admin@12345
+    ports:
+      - '8000:8000'
+    volumes:
+      - ./backend/uploads:/app/uploads
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8000/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      VITE_API_URL: http://localhost:8000/api/v1
+      VITE_WS_URL: ws://localhost:8000
+      VITE_APP_NAME: CampusMart
+    ports:
+      - '3000:80'
+
+volumes:
+  postgres_data:
