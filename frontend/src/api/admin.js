@@ -3,6 +3,7 @@ export const adminApi = {
   getReports: (params) => client.get('/admin/reports', { params }),
   resolveReport: (id, data) => client.post(`/admin/reports/${id}/resolve`, data),
   getUsers: (params) => client.get('/admin/users', { params }),
+  createUser: (data) => client.post('/admin/users', data),
   suspendUser: (id) => client.post(`/admin/users/${id}/suspend`),
   unsuspendUser: (id) => client.post(`/admin/users/${id}/unsuspend`),
   getListings: (params) => client.get('/admin/listings', { params }),

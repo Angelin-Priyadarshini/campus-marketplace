@@ -84,7 +84,6 @@ export function FilterSidebar({
               }`}
             >
               <span>
-                {c.icon && <span className="mr-1.5">{c.icon}</span>}
                 {c.name}
               </span>
             </button>

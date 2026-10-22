@@ -289,7 +289,7 @@ export default function ListingDetail() {
                 </span>
                 {Number(listing.store.rating_avg) >= 4.5 && listing.store.rating_count >= 5 && (
                   <span className="text-[11px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
-                    ⭐ Trusted Seller
+                    Trusted Seller
                   </span>
                 )}
               </div>

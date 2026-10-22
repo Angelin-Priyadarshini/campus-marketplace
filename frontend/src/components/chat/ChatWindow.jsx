@@ -147,7 +147,7 @@ export function ChatWindow({ conversationId, onBack }) {
               {counterpart?.full_name || 'Campus Student'}
             </h3>
             <span className="text-[10px] text-gray-400">
-              {isConnected ? '🟢 Real-time active' : '⚡ REST sync'}
+              {isConnected ? 'Live' : 'Syncing'}
             </span>
           </div>
         </div>

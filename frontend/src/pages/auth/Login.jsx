@@ -89,10 +89,7 @@ export default function Login() {
         </form>
 
         <div className="text-center pt-2 border-t border-gray-100 text-xs text-gray-500">
-          New to CampusMart?{' '}
-          <Link to="/register" className="text-primary font-semibold hover:underline">
-            Register your campus account
-          </Link>
+          Contact your campus administrator to get an account.
         </div>
       </div>
     </div>

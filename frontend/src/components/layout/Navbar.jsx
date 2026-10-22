@@ -290,13 +290,8 @@ export default function Navbar() {
             ) : (
               <div className="flex items-center gap-2">
                 <Link to="/login">
-                  <Button variant="ghost" size="sm">
-                    Log In
-                  </Button>
-                </Link>
-                <Link to="/register">
                   <Button variant="primary" size="sm">
-                    Register
+                    Log In
                   </Button>
                 </Link>
               </div>
@@ -415,13 +410,8 @@ export default function Navbar() {
             ) : (
               <div className="space-y-2 px-2 pt-2">
                 <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="block">
-                  <Button variant="secondary" className="w-full justify-center">
-                    Log In
-                  </Button>
-                </Link>
-                <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="block">
                   <Button variant="primary" className="w-full justify-center">
-                    Register
+                    Log In
                   </Button>
                 </Link>
               </div>

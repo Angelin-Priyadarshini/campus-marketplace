@@ -65,7 +65,7 @@ export default function StorePage() {
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{store.name}</h1>
                 {isTrustedSeller && (
                   <span className="text-xs font-bold text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                    ⭐ Trusted Seller
+                    Trusted Seller
                   </span>
                 )}
               </div>

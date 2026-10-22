@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Store, Sparkles, CheckCircle2 } from 'lucide-react'
+import { Store, CheckCircle2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { storesApi } from '../api/stores'
 import { useAuth } from '../context/AuthContext'

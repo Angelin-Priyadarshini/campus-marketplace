@@ -144,13 +144,13 @@ export default function Home() {
           {/* Value props */}
           <div className="pt-2 flex flex-wrap items-center gap-3 text-[11px] text-blue-100/90 font-medium">
             <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-lg backdrop-blur-xs">
-              🎓 Verified @ssn.edu.in Students
+              Verified @ssn.edu.in Students
             </span>
             <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-lg backdrop-blur-xs">
-              ⚡ 0% Commission
+              0% Commission
             </span>
             <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-lg backdrop-blur-xs">
-              🤝 Handover at Hostels & Depts
+              Handover at Hostels &amp; Depts
             </span>
           </div>
         </div>
@@ -181,7 +181,6 @@ export default function Home() {
                 : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
             }`}
           >
-            <span>{cat.icon}</span>
             <span>{cat.name}</span>
           </button>
         ))}

@@ -70,7 +70,7 @@ export default function Dashboard() {
       loadDashboardData(true)
       toast.success(
         `Order #${msg.order_id} updated to "${msg.status}"`,
-        { icon: '🔔', duration: 4000 }
+        { duration: 4000 }
       )
     }
   }, [loadDashboardData])

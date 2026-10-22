@@ -79,8 +79,17 @@ def _validate_email_domain(email: str) -> None:
         )
 
 
-@router.post("/register", response_model=RegisterResponse, status_code=status.HTTP_201_CREATED)
-async def register(
+@router.post("/register", status_code=status.HTTP_403_FORBIDDEN)
+async def register():
+    """Public registration is disabled. Accounts are created by the admin only."""
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Self-registration is disabled. Please contact your campus administrator to create an account.",
+    )
+
+
+@router.post("/register-disabled-stub", response_model=RegisterResponse, status_code=status.HTTP_201_CREATED, include_in_schema=False)
+async def register_stub(
     payload: RegisterRequest,
     request: Request,
     db: Session = Depends(get_db),

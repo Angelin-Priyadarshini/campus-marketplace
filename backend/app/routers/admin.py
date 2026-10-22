@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from pydantic import BaseModel, EmailStr, field_validator
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
@@ -19,6 +20,34 @@ from app.schemas.category import CategoryCreateRequest, CategoryResponse, Catego
 from app.schemas.listing import ListingResponse
 from app.schemas.report import ReportResolveRequest, ReportResponse
 from app.schemas.user import UserMeResponse
+from app.security import hash_password
+
+
+class AdminCreateUserRequest(BaseModel):
+    email: EmailStr
+    password: str
+    full_name: str
+    department: Optional[str] = None
+    year_of_study: Optional[int] = None
+    role: str = "student"
+
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, v: str) -> str:
+        if len(v) < 8:
+            raise ValueError("Password must be at least 8 characters")
+        if not any(c.isalpha() for c in v):
+            raise ValueError("Password must contain at least one letter")
+        if not any(c.isdigit() for c in v):
+            raise ValueError("Password must contain at least one digit")
+        return v
+
+    @field_validator("role")
+    @classmethod
+    def validate_role(cls, v: str) -> str:
+        if v not in ("student", "admin"):
+            raise ValueError("Role must be 'student' or 'admin'")
+        return v
 
 router = APIRouter()
 
@@ -146,6 +175,38 @@ async def list_users(
         "page_size": page_size,
         "total_pages": (total + page_size - 1) // page_size if total > 0 else 1,
     }
+
+
+@router.post("/users", response_model=UserMeResponse, status_code=status.HTTP_201_CREATED)
+async def admin_create_user(
+    payload: AdminCreateUserRequest,
+    current_admin: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+):
+    """Admin creates a new user account. No self-registration required."""
+    email_clean = payload.email.lower().strip()
+
+    existing = db.execute(select(User).where(User.email == email_clean)).scalar_one_or_none()
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="An account with this email already exists",
+        )
+
+    user = User(
+        email=email_clean,
+        password_hash=hash_password(payload.password),
+        full_name=payload.full_name.strip(),
+        department=payload.department.strip() if payload.department else None,
+        year_of_study=payload.year_of_study,
+        is_verified=True,   # Admin-created accounts are always pre-verified
+        is_active=True,
+        role=payload.role,
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
 
 
 @router.post("/users/{id}/suspend")

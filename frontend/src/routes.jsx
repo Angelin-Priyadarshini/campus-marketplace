@@ -124,7 +124,7 @@ export const routeElements = {
 
   // Auth
   Login:          <PageLoader><Login /></PageLoader>,
-  Register:       <PageLoader><Register /></PageLoader>,
+  Register:       <Navigate to="/login" replace />,
   VerifyEmail:    <PageLoader><VerifyEmail /></PageLoader>,
   ForgotPassword: <PageLoader><ForgotPassword /></PageLoader>,
   ResetPassword:  <PageLoader><ResetPassword /></PageLoader>,

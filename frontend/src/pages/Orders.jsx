@@ -50,7 +50,7 @@ export function Orders() {
       loadOrders(true)
       toast.success(
         `Order #${msg.order_id} updated: ${msg.status}`,
-        { icon: '🔔', duration: 3500 }
+        { duration: 3500 }
       )
     }
   }, [loadOrders])

@@ -25,7 +25,10 @@ client.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Don't intercept refresh or login calls — let them fail naturally
+    const isAuthCall = originalRequest.url?.includes('/auth/refresh') ||
+                       originalRequest.url?.includes('/auth/login')
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthCall) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           refreshSubscribers.push({ resolve, reject })

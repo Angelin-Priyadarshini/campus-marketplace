@@ -13,5 +13,5 @@ export const listingsApi = {
   },
   deleteImage: (id, imageId) => client.delete(`/listings/${id}/images/${imageId}`),
   reorderImages: (id, positions) => client.put(`/listings/${id}/images/order`, { positions }),
-  myListings: (params) => client.get('/me/listings', { params }),
+  myListings: (params) => client.get('/listings/me/listings', { params }),
 }
