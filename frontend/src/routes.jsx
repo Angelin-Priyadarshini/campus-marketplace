@@ -9,6 +9,7 @@ const Home          = lazy(() => import('./pages/Home'))
 const ListingDetail = lazy(() => import('./pages/ListingDetail'))
 const StorePage     = lazy(() => import('./pages/StorePage'))
 const NotFound      = lazy(() => import('./pages/NotFound'))
+const WantedBoard   = lazy(() => import('./pages/WantedBoard'))
 
 // Auth
 const Login           = lazy(() => import('./pages/auth/Login'))
@@ -121,6 +122,7 @@ export const routeElements = {
   ListingDetail:  <PageLoader><ListingDetail /></PageLoader>,
   StorePage:      <PageLoader><StorePage /></PageLoader>,
   NotFound:       <PageLoader><NotFound /></PageLoader>,
+  WantedBoard:    <PageLoader><WantedBoard /></PageLoader>,
 
   // Auth
   Login:          <PageLoader><Login /></PageLoader>,

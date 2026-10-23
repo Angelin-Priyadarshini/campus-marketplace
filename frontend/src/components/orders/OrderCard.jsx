@@ -44,6 +44,11 @@ export function OrderCard({
           <p className="text-xs text-gray-500 mt-0.5">
             Quantity: <strong className="text-gray-700">{order.quantity}</strong> · Total:{' '}
             <strong className="text-primary font-bold">{formatPrice(order.total_price)}</strong>
+            {order.payment_method && (
+              <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded-md bg-gray-100 text-gray-600 text-[10px] font-semibold uppercase">
+                {order.payment_method === 'upi' ? 'UPI' : order.payment_method === 'cash' ? 'Cash' : 'COD'}
+              </span>
+            )}
           </p>
 
           <p className="text-[11px] text-gray-400 mt-0.5">

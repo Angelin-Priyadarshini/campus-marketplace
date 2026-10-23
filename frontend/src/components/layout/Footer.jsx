@@ -66,24 +66,12 @@ export default function Footer() {
                   Order Inquiries
                 </Link>
               </li>
+              <li>
+                <Link to="/wanted" className="hover:text-primary transition-colors">
+                  Looking For Board
+                </Link>
+              </li>
             </ul>
-          </div>
-
-          {/* Course Details */}
-          <div>
-            <h4 className="font-semibold text-gray-900 mb-3 uppercase tracking-wider text-[11px]">
-              Course Project
-            </h4>
-            <p className="text-gray-500 leading-relaxed mb-2">
-              UIT2739 – Full Stack Development (2025–26)
-              <br />
-              Department of Information Technology
-            </p>
-            <p className="text-[11px] text-gray-400">
-              Angelin Priyadarshini Mariappan (3122235002011)
-              <br />
-              Balakkrishnan Govindhraj (3122235002024)
-            </p>
           </div>
         </div>
 

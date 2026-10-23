@@ -9,6 +9,7 @@ from pydantic import BaseModel
 class OrderCreateRequest(BaseModel):
     listing_id: int
     quantity: int = 1
+    payment_method: str = "cod"  # cod | upi | cash
     note: Optional[str] = None
     proposed_meetup: Optional[str] = None
 
@@ -31,6 +32,7 @@ class OrderResponse(BaseModel):
     quantity: int
     unit_price: Decimal
     status: str
+    payment_method: str = "cod"
     note: Optional[str] = None
     proposed_meetup: Optional[str] = None
     reject_reason: Optional[str] = None

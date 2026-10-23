@@ -18,6 +18,7 @@ class Order(Base):
     quantity = Column(Integer, nullable=False)
     unit_price = Column(Numeric(10, 2), nullable=False)
     status = Column(String(10), nullable=False, default="pending", server_default="pending")
+    payment_method = Column(String(10), nullable=False, default="cod", server_default="cod")
     note = Column(String(500))
     proposed_meetup = Column(String(200))
     reject_reason = Column(String(300))
@@ -29,6 +30,10 @@ class Order(Base):
         CheckConstraint(
             "status IN ('pending','accepted','completed','cancelled','rejected')",
             name="order_status_check"
+        ),
+        CheckConstraint(
+            "payment_method IN ('cod','upi','cash')",
+            name="order_payment_method_check"
         ),
     )
 

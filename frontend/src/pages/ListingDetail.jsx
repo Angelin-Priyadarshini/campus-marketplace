@@ -39,6 +39,7 @@ export default function ListingDetail() {
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false)
   const [orderQuantity, setOrderQuantity] = useState(1)
   const [orderMeetupNote, setOrderMeetupNote] = useState('')
+  const [orderPaymentMethod, setOrderPaymentMethod] = useState('cod')
   const [isOrdering, setIsOrdering] = useState(false)
 
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
@@ -92,6 +93,7 @@ export default function ListingDetail() {
       const res = await ordersApi.create({
         listing_id: listing.id,
         quantity: Number(orderQuantity),
+        payment_method: orderPaymentMethod,
         proposed_meetup: orderMeetupNote.trim() || null,
       })
       toast.success('Purchase request submitted! Seller has been notified.')
@@ -369,7 +371,7 @@ export default function ListingDetail() {
       >
         <form onSubmit={handleOrderSubmit} className="space-y-4">
           <p className="text-xs text-gray-500">
-            Submit a purchase inquiry to coordinate in-person cash or UPI payment on campus.
+            Coordinate an in-person campus meetup with the seller to complete the transaction.
           </p>
 
           <Input
@@ -381,9 +383,37 @@ export default function ListingDetail() {
             onChange={(e) => setOrderQuantity(e.target.value)}
           />
 
+          {/* Payment Method Selector */}
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-2">
+              Payment Method
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { value: 'cod', label: 'Cash on Delivery', desc: 'Pay cash at meetup' },
+                { value: 'upi', label: 'UPI', desc: 'GPay / PhonePe / Paytm' },
+                { value: 'cash', label: 'Cash', desc: 'Hand-to-hand cash' },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setOrderPaymentMethod(opt.value)}
+                  className={`p-3 rounded-xl border-2 text-left transition-all ${
+                    orderPaymentMethod === opt.value
+                      ? 'border-primary bg-primary/5 text-primary'
+                      : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                  }`}
+                >
+                  <p className="text-xs font-bold">{opt.label}</p>
+                  <p className="text-[10px] text-gray-500 mt-0.5">{opt.desc}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <Input
             label="Proposed Meetup Location & Time"
-            placeholder="e.g. Central Library porch, Thursday 1:15 PM lunch"
+            placeholder="e.g. Central Library porch, Thursday 1:15 PM"
             value={orderMeetupNote}
             onChange={(e) => setOrderMeetupNote(e.target.value)}
           />
@@ -391,7 +421,7 @@ export default function ListingDetail() {
           <div className="bg-blue-50 p-3 rounded-xl text-xs text-blue-800 space-y-1">
             <p className="font-semibold">Estimated Total: {formatPrice(listing.price * orderQuantity)}</p>
             <p className="text-[11px] text-blue-600">
-              No online payment required. Pay seller upon physical inspection.
+              Payment happens physically on campus. No online transaction is processed here.
             </p>
           </div>
 

@@ -99,6 +99,7 @@ async def create_order(
         quantity=payload.quantity,
         unit_price=listing.price,
         status="pending",
+        payment_method=payload.payment_method if payload.payment_method in ("cod", "upi", "cash") else "cod",
         note=payload.note.strip() if payload.note else None,
         proposed_meetup=payload.proposed_meetup.strip() if payload.proposed_meetup else None,
     )
@@ -142,7 +143,7 @@ async def create_order(
         db.flush()
 
     await _post_order_system_message(
-        db, order, f"Purchase request placed for {order.quantity} unit(s) at ₹{order.unit_price} each."
+        db, order, f"Purchase request placed for {order.quantity} unit(s) at ₹{order.unit_price} each. Payment: {order.payment_method.upper()}."
     )
 
     db.commit()
@@ -206,6 +207,7 @@ async def list_orders(
             "unit_price": o.unit_price,
             "total_price": o.unit_price * o.quantity,
             "status": o.status,
+            "payment_method": o.payment_method,
             "note": o.note,
             "proposed_meetup": o.proposed_meetup,
             "reject_reason": o.reject_reason,
@@ -253,6 +255,7 @@ async def get_order_detail(
         "unit_price": order.unit_price,
         "total_price": order.unit_price * order.quantity,
         "status": order.status,
+        "payment_method": order.payment_method,
         "note": order.note,
         "proposed_meetup": order.proposed_meetup,
         "reject_reason": order.reject_reason,

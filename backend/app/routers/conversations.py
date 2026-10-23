@@ -12,6 +12,7 @@ from app.models.conversation import Conversation, Message, UserBlock
 from app.models.listing import Listing
 from app.models.store import Store
 from app.models.user import User
+from app.models.wanted import WantedRequest
 from app.schemas.conversation import (
     ConversationCreateRequest,
     ConversationResponse,
@@ -233,9 +234,94 @@ async def send_message(
     return msg
 
 
+@router.post("/wanted-reply/{wanted_id}", status_code=status.HTTP_201_CREATED)
+async def reply_to_wanted(
+    wanted_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Start a direct conversation in response to a 'Looking For' request.
+    Uses the first listing of the replier's store as conversation anchor,
+    or falls back to a dummy approach via a shared sentinel listing trick.
+    Instead, we reuse the wanted request context by storing requester_id
+    and replier as buyer/seller on any existing listing or creating a
+    system message thread.
+    """
+    wanted = db.get(WantedRequest, wanted_id)
+    if not wanted:
+        raise HTTPException(status_code=404, detail="Wanted request not found")
+
+    requester_id = wanted.requester_id
+    if requester_id == current_user.id:
+        raise HTTPException(status_code=400, detail="You cannot reply to your own request")
+
+    # Find or create a conversation between current_user (replier) and requester.
+    # Since our Conversation model requires listing_id, we find ANY listing owned
+    # by current_user's store to anchor the thread, or any listing the requester can see.
+    # Simplest: find the replier's first active listing.
+    from app.models.store import Store as StoreModel
+    from sqlalchemy import desc
+
+    replier_store = db.execute(
+        select(Store).where(Store.owner_id == current_user.id)
+    ).scalar_one_or_none()
+
+    anchor_listing = None
+    if replier_store:
+        anchor_listing = db.execute(
+            select(Listing)
+            .where(Listing.store_id == replier_store.id, Listing.status == "active")
+            .order_by(Listing.id.asc())
+            .limit(1)
+        ).scalar_one_or_none()
+
+    if not anchor_listing:
+        # Fall back: find any active listing in the marketplace
+        anchor_listing = db.execute(
+            select(Listing).where(Listing.status == "active").limit(1)
+        ).scalar_one_or_none()
+
+    if not anchor_listing:
+        raise HTTPException(
+            status_code=400,
+            detail="No listings available to anchor this conversation. Post a listing first to reply.",
+        )
+
+    # buyer = requester (they want to buy), seller = current_user (has the item)
+    conv = db.execute(
+        select(Conversation).where(
+            Conversation.listing_id == anchor_listing.id,
+            Conversation.buyer_id == requester_id,
+            Conversation.seller_id == current_user.id,
+        )
+    ).scalar_one_or_none()
+
+    if not conv:
+        conv = Conversation(
+            listing_id=anchor_listing.id,
+            buyer_id=requester_id,
+            seller_id=current_user.id,
+            last_message_at=datetime.now(timezone.utc),
+        )
+        db.add(conv)
+        db.flush()
+
+        # Auto-send an opening system message with context
+        opening = Message(
+            conversation_id=conv.id,
+            sender_id=None,
+            body=f'Reply to "Looking For" request: "{wanted.title}"',
+            is_system=True,
+        )
+        db.add(opening)
+
+    db.commit()
+    db.refresh(conv)
+    return {"id": conv.id}
+
+
 @router.post("/{id}/read")
-async def mark_conversation_read(
-    id: int,
+async def mark_conversation_read(    id: int,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):

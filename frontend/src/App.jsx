@@ -42,6 +42,7 @@ const router = createBrowserRouter([
       { path: '/orders/:id',           element: routeElements.OrderDetail },
       { path: '/sell',                 element: routeElements.SellPage },
       { path: '/profile',              element: routeElements.Profile },
+      { path: '/wanted',               element: routeElements.WantedBoard },
 
       // Seller dashboard
       { path: '/dashboard',                          element: routeElements.Dashboard },

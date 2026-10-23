@@ -12,7 +12,9 @@ export const formatCurrency = formatPrice
 export const formatRelativeTime = (dateStr) => {
   if (!dateStr) return ''
   const now = new Date()
-  const date = new Date(dateStr)
+  // Backend returns UTC timestamps without 'Z' — force UTC parsing
+  const normalized = dateStr.endsWith('Z') || dateStr.includes('+') ? dateStr : dateStr + 'Z'
+  const date = new Date(normalized)
   const diffMs = now - date
   const diffSecs = Math.floor(diffMs / 1000)
   const diffMins = Math.floor(diffSecs / 60)

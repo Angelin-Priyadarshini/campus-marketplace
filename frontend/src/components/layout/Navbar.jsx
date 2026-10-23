@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   PackageCheck,
+  ClipboardList,
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { conversationsApi } from '../../api/conversations'
@@ -126,6 +127,14 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             {isAuthenticated ? (
               <>
+                <Link
+                  to="/wanted"
+                  className="p-2 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-full transition-colors relative"
+                  title="Looking For Board"
+                >
+                  <ClipboardList size={20} />
+                </Link>
+
                 <Link
                   to="/wishlist"
                   className="p-2 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-full transition-colors relative"
@@ -343,6 +352,15 @@ export default function Navbar() {
                 >
                   <LayoutDashboard size={18} />
                   {user?.has_storefront ? 'Vendor Dashboard' : 'Open Storefront'}
+                </Link>
+
+                <Link
+                  to="/wanted"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
+                >
+                  <ClipboardList size={18} />
+                  Looking For Board
                 </Link>
 
                 <Link

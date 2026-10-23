@@ -34,6 +34,7 @@ from app.routers import (
     reviews,
     stores,
     users,
+    wanted,
     wishlist,
 )
 from app.ws.chat_ws import chat_ws_endpoint
@@ -130,6 +131,7 @@ app.include_router(reviews.router, prefix="/api/v1", tags=["reviews"])
 app.include_router(reports.router, prefix="/api/v1/reports", tags=["reports"])
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["admin"])
 app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["notifications"])
+app.include_router(wanted.router, prefix="/api/v1/wanted", tags=["wanted"])
 
 
 # WebSocket Chat Endpoint

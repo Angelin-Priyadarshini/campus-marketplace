@@ -23,6 +23,24 @@ export function ChatWindow({ conversationId, onBack }) {
   const handleWsMessage = (data) => {
     if (data.type === 'message' && data.conversation_id === Number(conversationId)) {
       setMessages((prev) => {
+        // If there's a pending temp message from this user with same body, replace it
+        const tempIndex = prev.findIndex(
+          (m) => typeof m.id === 'string' && m.id.startsWith('temp_') && m.body === data.body && m.sender_id === data.sender_id
+        )
+        if (tempIndex !== -1) {
+          // Replace optimistic with confirmed message
+          const next = [...prev]
+          next[tempIndex] = {
+            id: data.id,
+            conversation_id: data.conversation_id,
+            sender_id: data.sender_id,
+            body: data.body,
+            created_at: data.created_at || new Date().toISOString(),
+            is_system: false,
+          }
+          return next
+        }
+        // Deduplicate by id
         if (prev.some((m) => m.id === data.id)) return prev
         return [
           ...prev,
@@ -77,6 +95,8 @@ export function ChatWindow({ conversationId, onBack }) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  const pendingTempRef = useRef({}) // tempId -> body mapping for WS echo matching
+
   const handleSend = async (textToSend) => {
     const text = (textToSend || inputText).trim()
     if (!text) return
@@ -114,6 +134,7 @@ export function ChatWindow({ conversationId, onBack }) {
         setMessages((prev) => prev.filter((m) => m.id !== tempId))
       }
     }
+    // If sent via WS, the echo from handleWsMessage will replace the temp message
   }
 
   if (loading) {
